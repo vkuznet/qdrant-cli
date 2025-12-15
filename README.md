@@ -5,8 +5,6 @@ It is designed for quick operational tasks such as listing collections, describi
 
 The tool is intentionally simple, dependency-light, and scriptable.
 
----
-
 ## Features
 
 * List existing Qdrant collections
@@ -50,7 +48,6 @@ go build -o qdrant-cli
 | `--fields` | Fields to display (comma-separated)   | `id,filename` |
 | `--limit`  | Scroll page size                      | `5`           |
 
----
 
 ## Commands
 
@@ -109,7 +106,6 @@ Distance            Cosine
 qdrant-cli --info cbf_images --format json
 ```
 
----
 
 ### Create a collection
 
@@ -119,7 +115,6 @@ qdrant-cli --create cbf_images --dim 50176
 
 Creates a collection with cosine distance and the specified vector dimension.
 
----
 
 ### Delete a collection
 
@@ -127,9 +122,8 @@ Creates a collection with cosine distance and the specified vector dimension.
 qdrant-cli --delete cbf_images
 ```
 
-⚠️ This permanently deletes the collection.
+This permanently deletes the collection.
 
----
 
 ### Scroll points (inspect records)
 
@@ -152,7 +146,6 @@ This format is ideal for scripting:
 qdrant-cli --scroll cbf_images | awk '{print $2}'
 ```
 
----
 
 ### Select which fields to show
 
@@ -166,7 +159,6 @@ Output:
 7f789aa0-012a-4a37-a297-e3b228ae8486	CeO2_test1_PIL10_007_180.cbf	2463	2527
 ```
 
----
 
 ### Table format (human-readable)
 
@@ -182,7 +174,6 @@ ID                                    FIELD     VALUE
                                       height    2527
 ```
 
----
 
 ### JSON format (raw API output)
 
@@ -208,7 +199,6 @@ payload_key=value
 
 Currently supports exact keyword match.
 
----
 
 ## Design Notes
 
@@ -221,8 +211,6 @@ Currently supports exact keyword match.
 * Payload field order is deterministic and user-controlled
 * Numeric point IDs are skipped by default in TSV output (UUID-focused workflow)
 
----
-
 ## Example Use Cases
 
 * Inspect vector collections on a production Qdrant instance
@@ -230,18 +218,6 @@ Currently supports exact keyword match.
 * Pipe UUIDs and filenames into shell scripts
 * Quickly audit payload metadata
 * Debug collection configuration without opening dashboards
-
----
-
-## Future Improvements (Ideas)
-
-* Pagination / streaming scroll
-* `--sort` and `--where` expressions
-* CSV output
-* Vector preview / norms
-* Collection stats summary mode
-
----
 
 ## License
 
