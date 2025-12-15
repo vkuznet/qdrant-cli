@@ -71,13 +71,13 @@ func printCollectionInfo(info *qdrant.CollectionInfo) {
 
 	fmt.Fprintf(w, "Status\t%v\n", info.Status)
 	fmt.Fprintf(w, "Segments\t%d\n", info.SegmentsCount)
-	fmt.Fprintf(w, "Points\t%d\n", info.PointsCount)
-	fmt.Fprintf(w, "Indexed vectors\t%d\n", info.IndexedVectorsCount)
+	fmt.Fprintf(w, "Points\t%d\n", *info.PointsCount)
+	fmt.Fprintf(w, "Indexed vectors\t%d\n", *info.IndexedVectorsCount)
 
 	if p := info.Config.GetParams(); p != nil {
 		fmt.Fprintf(w, "Shard number\t%d\n", p.ShardNumber)
-		fmt.Fprintf(w, "Replication factor\t%d\n", p.ReplicationFactor)
-		fmt.Fprintf(w, "Write consistency\t%d\n", p.WriteConsistencyFactor)
+		fmt.Fprintf(w, "Replication factor\t%d\n", *p.ReplicationFactor)
+		fmt.Fprintf(w, "Write consistency\t%d\n", *p.WriteConsistencyFactor)
 		fmt.Fprintf(w, "On-disk payload\t%v\n", p.OnDiskPayload)
 
 		if vc := p.VectorsConfig.GetParams(); vc != nil {
