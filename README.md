@@ -20,7 +20,6 @@ The tool is intentionally simple, dependency-light, and scriptable.
 * Select which payload fields to display
 * Works directly with Qdrant **gRPC** (no REST dependency)
 
----
 
 ## Installation
 
@@ -35,7 +34,6 @@ go build -o qdrant-cli
 * Go 1.20+
 * Running Qdrant instance with gRPC enabled (default port `6334`)
 
----
 
 ## Global Options
 
@@ -72,7 +70,6 @@ test_vectors
 qdrant-cli --list --format json
 ```
 
----
 
 ### Describe a collection
 
@@ -183,7 +180,6 @@ qdrant-cli --scroll cbf_images --format json
 
 Useful for debugging or programmatic processing.
 
----
 
 ### Filter by payload field
 
