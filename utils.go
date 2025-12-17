@@ -166,31 +166,31 @@ func printPointsTable(points []*qdrant.RetrievedPoint, fields string) {
 }
 
 func scrollCollection(ctx context.Context, c *qdrant.Client,
-	name, fields, format, filterKV string, offset, limit uint) error {
+	name, fields, format, filterKV string, idx, limit uint) error {
 
 	sel := qdrant.WithPayloadSelector{
 		SelectorOptions: &qdrant.WithPayloadSelector_Enable{Enable: true},
 	}
-	ulim := uint32(limit)
 
-	pnum := &qdrant.PointId_Num{Num: uint64(offset)}
+	totalLimit := uint32(idx + limit)
+
 	points, err := c.Scroll(ctx, &qdrant.ScrollPoints{
 		CollectionName: name,
-		Limit:          &ulim,
-		Offset:         &qdrant.PointId{PointIdOptions: pnum},
+		Limit:          &totalLimit,
 		Filter:         buildFilter(filterKV),
 		WithPayload:    &sel,
 	})
 	if err != nil {
 		return err
 	}
+	fpoints := points[idx:]
 
 	if format == "table" {
-		printPointsTable(points, fields)
+		printPointsTable(fpoints, fields)
 	} else if format == "json" {
-		output(points, format)
+		output(fpoints, format)
 	} else {
-		printPointsTSV(points, fields)
+		printPointsTSV(fpoints, fields)
 	}
 	return nil
 }

@@ -33,6 +33,7 @@ var recordsCmd = &cobra.Command{
 		client, ctx := getClient()
 		name := args[0]
 		return scrollCollection(ctx,
-			client, name, recordsFields, recordsFormat, recordsFilter, recordsOffset, recordsLimit)
+			client, name,
+			recordsFields, recordsFormat, recordsFilter, recordsOffset, recordsLimit)
 	},
 }
