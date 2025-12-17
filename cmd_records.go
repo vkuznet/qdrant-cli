@@ -3,7 +3,8 @@ package main
 import "github.com/spf13/cobra"
 
 var (
-	recordsLimit uint
+	recordsLimit  uint
+	recordsOffset uint
 )
 
 func init() {
@@ -11,7 +12,14 @@ func init() {
 		&recordsLimit,
 		"limit",
 		5,
-		"Scroll page size",
+		"Number of records to look-up from given offset",
+	)
+
+	recordsCmd.Flags().UintVar(
+		&recordsOffset,
+		"offset",
+		0,
+		"Pagination offset",
 	)
 
 	rootCmd.AddCommand(recordsCmd)
@@ -24,6 +32,7 @@ var recordsCmd = &cobra.Command{
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, ctx := getClient()
 		name := args[0]
-		return scrollCollection(ctx, client, name, recordsFields, recordsFormat, recordsFilter, recordsLimit)
+		return scrollCollection(ctx,
+			client, name, recordsFields, recordsFormat, recordsFilter, recordsOffset, recordsLimit)
 	},
 }
