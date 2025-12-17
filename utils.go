@@ -12,8 +12,8 @@ import (
 	"github.com/qdrant/go-client/qdrant"
 )
 
-func output(v any) {
-	if *format == "json" {
+func output(v any, format string) {
+	if format == "json" {
 		enc := json.NewEncoder(os.Stdout)
 		enc.SetIndent("", "  ")
 		_ = enc.Encode(v)
@@ -22,12 +22,12 @@ func output(v any) {
 	fmt.Printf("%+v\n", v)
 }
 
-func buildFilter() *qdrant.Filter {
-	if *filterKV == "" {
+func buildFilter(filterKV string) *qdrant.Filter {
+	if filterKV == "" {
 		return nil
 	}
 
-	parts := strings.SplitN(*filterKV, "=", 2)
+	parts := strings.SplitN(filterKV, "=", 2)
 	if len(parts) != 2 {
 		log.Fatal("filter must be payload.key=value")
 	}
@@ -49,14 +49,14 @@ func printCollectionsTable(cols []string) {
 	w.Flush()
 }
 
-func listCollections(ctx context.Context, c *qdrant.Client) error {
+func listCollections(ctx context.Context, c *qdrant.Client, format string) error {
 	cols, err := c.ListCollections(ctx)
 	if err != nil {
 		return err
 	}
 
-	if *format == "json" {
-		output(cols)
+	if format == "json" {
+		output(cols, format)
 	} else {
 		printCollectionsTable(cols)
 	}
@@ -89,14 +89,14 @@ func printCollectionInfo(info *qdrant.CollectionInfo) {
 	w.Flush()
 }
 
-func describeCollection(ctx context.Context, c *qdrant.Client, name string) error {
+func describeCollection(ctx context.Context, c *qdrant.Client, name, format string) error {
 	info, err := c.GetCollectionInfo(ctx, name)
 	if err != nil {
 		return err
 	}
 
-	if *format == "json" {
-		output(info)
+	if format == "json" {
+		output(info, format)
 	} else {
 		printCollectionInfo(info)
 	}
@@ -128,8 +128,8 @@ func payloadValue(v *qdrant.Value) string {
 	}
 }
 
-func printPointsTable(points []*qdrant.RetrievedPoint) {
-	reqFields := parseFields()
+func printPointsTable(points []*qdrant.RetrievedPoint, fields string) {
+	reqFields := parseFields(fields)
 
 	w := tabwriter.NewWriter(os.Stdout, 2, 4, 2, ' ', 0)
 	fmt.Fprintln(w, "ID\tFIELD\tVALUE")
@@ -165,7 +165,8 @@ func printPointsTable(points []*qdrant.RetrievedPoint) {
 	w.Flush()
 }
 
-func scrollCollection(ctx context.Context, c *qdrant.Client, name string, limit uint) error {
+func scrollCollection(ctx context.Context, c *qdrant.Client,
+	name, fields, format, filterKV string, limit uint) error {
 	var offset *qdrant.PointId
 
 	sel := qdrant.WithPayloadSelector{
@@ -177,25 +178,25 @@ func scrollCollection(ctx context.Context, c *qdrant.Client, name string, limit 
 		CollectionName: name,
 		Limit:          &ulim,
 		Offset:         offset,
-		Filter:         buildFilter(),
+		Filter:         buildFilter(filterKV),
 		WithPayload:    &sel,
 	})
 	if err != nil {
 		return err
 	}
 
-	if *format == "table" {
-		printPointsTable(points)
-	} else if *format == "json" {
-		output(points)
+	if format == "table" {
+		printPointsTable(points, fields)
+	} else if format == "json" {
+		output(points, format)
 	} else {
-		printPointsTSV(points)
+		printPointsTSV(points, fields)
 	}
 	return nil
 }
 
-func parseFields() []string {
-	parts := strings.Split(*fields, ",")
+func parseFields(fields string) []string {
+	parts := strings.Split(fields, ",")
 	var out []string
 	for _, p := range parts {
 		p = strings.TrimSpace(p)
@@ -206,8 +207,8 @@ func parseFields() []string {
 	return out
 }
 
-func printPointsTSV(points []*qdrant.RetrievedPoint) {
-	fields := parseFields()
+func printPointsTSV(points []*qdrant.RetrievedPoint, recordsFields string) {
+	fields := parseFields(recordsFields)
 
 	for _, p := range points {
 		var cols []string
