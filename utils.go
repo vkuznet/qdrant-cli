@@ -166,8 +166,10 @@ func printPointsTable(points []*qdrant.RetrievedPoint, fields string) {
 }
 
 func infoCollection(ctx context.Context, c *qdrant.Client, name string) error {
+	totalLimit := uint32(10000000)
 	points, err := c.Scroll(ctx, &qdrant.ScrollPoints{
 		CollectionName: name,
+		Limit:          &totalLimit,
 	})
 	if err != nil {
 		return err
