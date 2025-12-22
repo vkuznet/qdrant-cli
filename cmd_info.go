@@ -7,8 +7,8 @@ func init() {
 }
 
 var infoCmd = &cobra.Command{
-	Use:   "records <collection>",
-	Short: "List records in a collection",
+	Use:   "info <collection>",
+	Short: "Show collection info",
 	Args:  cobra.ExactArgs(1),
 	RunE: func(cmd *cobra.Command, args []string) error {
 		client, ctx := getClient()
