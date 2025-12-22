@@ -165,6 +165,18 @@ func printPointsTable(points []*qdrant.RetrievedPoint, fields string) {
 	w.Flush()
 }
 
+func infoCollection(ctx context.Context, c *qdrant.Client, name string) error {
+	points, err := c.Scroll(ctx, &qdrant.ScrollPoints{
+		CollectionName: name,
+	})
+	if err != nil {
+		return err
+	}
+	fmt.Printf("Collection   : %s\n", name)
+	fmt.Printf("Total records: %d\n", len(points))
+	return nil
+}
+
 func scrollCollection(ctx context.Context, c *qdrant.Client,
 	name, fields, format, filterKV string, idx, limit uint) error {
 
